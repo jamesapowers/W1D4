@@ -1,16 +1,18 @@
 class Board
   def initialize(grid = Array.new(9) { Array.new(9) { 0 } })
     @grid = grid
+    self.populate_bombs
+    self.populate_counts
   end
 
   def populate_bombs
     9.times do |i|
-      @grid[bomb_position] = "BOMB!"
+      @grid[bomb_position][bomb_position] = "BOMB!"
     end
   end
 
   def populate_counts
-    self.each_with_index do |row, i|
+    @grid.each_with_index do |row, i|
       row.each_with_index do |el, j|
         if el.is_a?(String)
           near_bomb_count(i, j)
@@ -22,15 +24,15 @@ class Board
   def near_bomb_count(row, col)
     (row - 1).upto(row + 1).each do |row_sub|
       (col - 1).upto(col + 1).each do |col_sub|
-        unless @grid[[row_sub, col_sub]].is_a?(String)
-          @grid[[row_sub, col_sub]] += 1
+        unless @grid[row_sub][col_sub].is_a?(String)
+          @grid[row_sub][col_sub] += 1
         end
       end
     end
   end
 
   def bomb_position
-    [rand(9), rand(9)]
+    rand(9)
   end
 
   def [](pos)
@@ -48,7 +50,10 @@ class Board
   end
 
   def render
+    puts grid
+  end
 
+  def reveal
   end
 
 end
@@ -103,3 +108,6 @@ class Minesweeper
     pos.split(",").map { |char| Integer(char) }
   end
 end
+
+game = Minesweeper.new
+game.run
